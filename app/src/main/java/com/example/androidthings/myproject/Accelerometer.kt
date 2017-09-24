@@ -43,20 +43,20 @@ class Accelerometer(bus: String, private var gscale: Int = 2) : AutoCloseable {
 
     fun test(): Boolean =
             device?.readRegByte(Register.WHO_AM_I.location)?.toInt() == 0x2A
-    
+
     fun readSample(): FloatArray? =
             device?.let {
                 val sample = ByteArray(6)
                 it.readRegBuffer(Register.OUT_X_MSB.location, sample, 6)
 
-                val vals = FloatArray(3)
+                val translations = FloatArray(3)
                 for (i in 0..2) {
                     val gcount = ((sample[i * 2].toInt() shl 8) or sample[i * 2 + 1].toInt()) shr 4
-                    if (sample[i * 2] > 0x7F) vals[i] = (gcount - 0x1000).toFloat() // make negative when signed neg
-                    else vals[i] = gcount.toFloat()
+                    if (sample[i * 2] > 0x7F) translations[i] = (gcount - 0x1000).toFloat() // make negative when signed neg
+                    else translations[i] = gcount.toFloat()
                 }
 
-                return vals
+                return translations
 
             } ?: throw  notConnectedError
 

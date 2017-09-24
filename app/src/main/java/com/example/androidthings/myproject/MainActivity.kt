@@ -46,22 +46,10 @@ import com.google.android.things.pio.PeripheralManagerService
  */
 class MainActivity : Activity() {
 
-    lateinit var periphManager: PeripheralManagerService
-    lateinit var sensorManager: SensorManager
-    lateinit var accelDriver: AcceleromterDriver
-
-    val eventListener = object : SensorEventListener {
-        override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-            println("accuracy changed")
-        }
-
-        override fun onSensorChanged(event: SensorEvent?) {
-            val x = event?.values?.get(0)
-            val y = event?.values?.get(1)
-            val z = event?.values?.get(2)
-            println("Sensor changed -- x: $x, y: $y, z: $z")
-        }
+    companion object {
+        private val TAG = MainActivity::class.java.simpleName
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +80,48 @@ class MainActivity : Activity() {
         accelDriver.close()
     }
 
-    companion object {
-        private val TAG = MainActivity::class.java.simpleName
+    private fun initVals(x: Float, y: Float, z: Float) {
+        prevX = x
+        prevY = y
+        prevZ = z
+
+        firstRead = false
     }
+
+    private fun testDelta(current: Float, previous: Float): Boolean =
+            Math.abs(previous - current) > 500
+
+    private fun testDeltas(x: Float, y: Float, z: Float): Boolean =
+            (testDelta(x, prevX) || testDelta(y, prevY))
+
+    private val eventListener = object : SensorEventListener {
+        override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+            println("accuracy changed")
+        }
+
+        override fun onSensorChanged(event: SensorEvent) {
+            val x = event.values?.get(0) ?: throw Throwable("missing x value")
+            val y = event.values?.get(1) ?: throw Throwable("missing y value")
+            val z = event.values?.get(2) ?: throw Throwable("missing z value")
+
+            if (firstRead) initVals(x, y, z)
+
+            if (testDeltas(x, y, z))
+                println("Sensor changed significantly \n" +
+                        "-- prevX: $prevX, prevy: $prevY, prevz: $prevZ \n" +
+                        "-- x: $x, y: $y, z: $z")
+
+            initVals(x, y, z)
+        }
+    }
+
+    private var prevX: Float = 0f
+    private var prevY: Float = 0f
+    private var prevZ: Float = 0f
+
+    private var firstRead = true
+
+    lateinit var periphManager: PeripheralManagerService
+    lateinit var sensorManager: SensorManager
+    lateinit var accelDriver: AcceleromterDriver
 }
