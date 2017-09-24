@@ -43,53 +43,7 @@ class Accelerometer(bus: String, private var gscale: Int = 2) : AutoCloseable {
 
     fun test(): Boolean =
             device?.readRegByte(Register.WHO_AM_I.location)?.toInt() == 0x2A
-
-    /*
-            void loop()
-            {
-              int accelCount[3];  // Stores the 12-bit signed value
-              readAccelData(accelCount);  // Read the x/y/z adc values
-
-              // Now we'll calculate the accleration value into actual g's
-              float accelG[3];  // Stores the real accel value in g's
-              for (int i = 0 ; i < 3 ; i++)
-              {
-                accelG[i] = (float) accelCount[i] / ((1<<12)/(2*GSCALE));  // get actual g value, this depends on scale being set
-              }
-
-              // Print out values
-              for (int i = 0 ; i < 3 ; i++)
-              {
-                Serial.print(accelG[i], 4);  // Print g values
-                Serial.print("\t");  // tabs in between axes
-              }
-              Serial.println();
-
-              delay(10);  // Delay here for visibility
-            }
-
-            void readAccelData(int *destination)
-            {
-              byte rawData[6];  // x/y/z accel register data stored here
-
-              readRegisters(OUT_X_MSB, 6, rawData);  // Read the six raw data registers into data array
-
-              // Loop to calculate 12-bit ADC and g value for each axis
-              for(int i = 0; i < 3 ; i++)
-              {
-                int gCount = (rawData[i*2] << 8) | rawData[(i*2)+1];  //Combine the two 8 bit registers into one 12-bit number
-                gCount >>= 4; //The registers are left align, here we right align the 12-bit integer
-
-                // If the number is negative, we have to make it so manually (no 12-bit data type)
-                if (rawData[i*2] > 0x7F)
-                {
-                  gCount -= 0x1000;
-                }
-
-                destination[i] = gCount; //Record this gCount into the 3 int array
-              }
-            }
-     */
+    
     fun readSample(): FloatArray? =
             device?.let {
                 val sample = ByteArray(6)
