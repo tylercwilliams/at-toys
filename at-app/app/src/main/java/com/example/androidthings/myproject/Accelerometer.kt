@@ -58,7 +58,7 @@ class Accelerometer(bus: String, private var gscale: Int = 2) : AutoCloseable {
 
                 return translations
 
-            } ?: throw  notConnectedError
+            } ?: throw notConnectedError
 
     private var device: I2cDevice?
     private var pioService: PeripheralManagerService? = PeripheralManagerService()
