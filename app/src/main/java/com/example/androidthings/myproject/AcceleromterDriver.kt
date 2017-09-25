@@ -21,7 +21,6 @@ class AcceleromterDriver(bus: String) : AutoCloseable {
         private val MIN_DELAY = Math.round(1000000f / Accelerometer.MAX_FREQ_HZ)
         private val MAX_DELAY = Math.round(1000000f / Accelerometer.MIN_FREQ_HZ)
 
-
         fun build(device: Accelerometer): UserSensor =
                 UserSensor.Builder()
                         .setType(Sensor.TYPE_ACCELEROMETER)
