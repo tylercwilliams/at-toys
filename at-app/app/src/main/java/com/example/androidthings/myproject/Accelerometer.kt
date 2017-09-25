@@ -29,7 +29,7 @@ class Accelerometer(bus: String, private var gscale: Int = 2) : AutoCloseable {
         OUT_Y_MSB(0x03),
         OUT_Y_LSB(0x04),
         OUT_Z_MSB(0x05),
-        OUT_Z_LSB(0x07),
+        OUT_Z_LSB(0x06),
         WHO_AM_I(0x0D),
         XYZ_DATA_CFG(0x0E),
         CTL_REG1(0x2A) // 0 == standby, 1 == active
