@@ -27,6 +27,9 @@ import android.util.Log
 import com.example.androidthings.myproject.api.WandService
 import com.example.androidthings.myproject.api.model.AccelData
 import com.google.android.things.pio.PeripheralManagerService
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -76,7 +79,7 @@ class MainActivity : Activity() {
         accelDriver.test()
 
         retrofit = Retrofit.Builder()
-                .baseUrl("localhost:5000")
+                .baseUrl("http://192.168.1.8:5000")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
@@ -124,7 +127,16 @@ class MainActivity : Activity() {
                         "-- x: $x, y: $y, z: $z")
                 val transmission = AccelData(x, y , z)
 
-                wandSerice.sendData(transmission)
+                wandSerice.sendData(transmission).enqueue(object: Callback<AccelData>{
+                    override fun onResponse(call: Call<AccelData>?, response: Response<AccelData>?) {
+                        println("Got it")
+                    }
+
+                    override fun onFailure(call: Call<AccelData>?, t: Throwable?) {
+                        println("didn't get it: ${t?.localizedMessage}")
+                    }
+
+                })
             }
 
             initVals(x, y, z)
