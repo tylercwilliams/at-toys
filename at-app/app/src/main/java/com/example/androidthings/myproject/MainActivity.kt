@@ -24,7 +24,11 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
+import com.example.androidthings.myproject.api.WandService
+import com.example.androidthings.myproject.api.model.AccelData
 import com.google.android.things.pio.PeripheralManagerService
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 /**
  * Skeleton of the main Android Things activity. Implement your device's logic
@@ -70,6 +74,14 @@ class MainActivity : Activity() {
         })
 
         accelDriver.test()
+
+        retrofit = Retrofit.Builder()
+                .baseUrl("localhost:5000")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+        wandSerice = retrofit.create(WandService::class.java)
+
     }
 
     override fun onDestroy() {
@@ -106,10 +118,14 @@ class MainActivity : Activity() {
 
             if (firstRead) initVals(x, y, z)
 
-            if (testDeltas(x, y, z))
+            if (testDeltas(x, y, z)) {
                 println("Sensor changed significantly \n" +
                         "-- prevX: $prevX, prevy: $prevY, prevz: $prevZ \n" +
                         "-- x: $x, y: $y, z: $z")
+                val transmission = AccelData(x, y , z)
+
+                wandSerice.sendData(transmission)
+            }
 
             initVals(x, y, z)
         }
@@ -124,4 +140,7 @@ class MainActivity : Activity() {
     lateinit var periphManager: PeripheralManagerService
     lateinit var sensorManager: SensorManager
     lateinit var accelDriver: AcceleromterDriver
+
+    lateinit var retrofit: Retrofit
+    lateinit var wandSerice: WandService
 }
