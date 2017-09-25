@@ -64,7 +64,7 @@ class MainActivity : Activity() {
 
         periphManager = PeripheralManagerService()
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        accelDriver = AcceleromterDriver("I2C1")
+        accelDriver = AccelerometerDriver("I2C1")
 
         accelDriver.register()
 
@@ -135,10 +135,8 @@ class MainActivity : Activity() {
                     override fun onFailure(call: Call<AccelData>?, t: Throwable?) {
                         println("didn't get it: ${t?.localizedMessage}")
                     }
-
                 })
             }
-
             initVals(x, y, z)
         }
     }
@@ -151,7 +149,7 @@ class MainActivity : Activity() {
 
     lateinit var periphManager: PeripheralManagerService
     lateinit var sensorManager: SensorManager
-    lateinit var accelDriver: AcceleromterDriver
+    lateinit var accelDriver: AccelerometerDriver
 
     lateinit var retrofit: Retrofit
     lateinit var wandSerice: WandService

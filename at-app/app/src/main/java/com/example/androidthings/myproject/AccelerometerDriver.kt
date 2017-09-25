@@ -9,7 +9,7 @@ import com.google.android.things.userdriver.UserSensorReading
 import java.util.*
 
 
-class AcceleromterDriver(bus: String) : AutoCloseable {
+class AccelerometerDriver(bus: String) : AutoCloseable {
 
     companion object {
         private val NAME: String = "mma8452qt"
